@@ -41,9 +41,14 @@ def main(
 
 @app.command()
 def init(
-    name: str = typer.Argument(..., help="Project name (creates directory)"),
+    name: str = typer.Argument(
+        None, help="Project name (optional, interactive if omitted)"
+    ),
     template: str = typer.Option(
-        "default", "--template", "-t", help="Template: default, research, code-helper"
+        None,
+        "--template",
+        "-t",
+        help="Template: default, research, code-helper (skips interactive)",
     ),
     force: bool = typer.Option(
         False, "--force", "-f", help="Overwrite existing directory"
@@ -51,13 +56,21 @@ def init(
 ):
     """Create a new ZergBot agent project.
 
-    Examples:
-        zergbot init my-agent           # Create with default template
-        zergbot init research-bot -t research
-        zergbot init helper -t code-helper
-    """
-    from zergbot.scaffold import create_project
+    Run without arguments for interactive mode (recommended):
+        zergbot init
 
+    Or specify name directly:
+        zergbot init my-agent
+        zergbot init research-bot -t research
+    """
+    from zergbot.scaffold import create_project, create_project_interactive
+
+    # Interactive mode if no name provided
+    if name is None:
+        create_project_interactive(console)
+        return
+
+    # Non-interactive mode
     project_dir = Path.cwd() / name
 
     if project_dir.exists() and not force:
@@ -66,13 +79,13 @@ def init(
         raise typer.Exit(1)
 
     try:
-        create_project(project_dir, template, console)
+        create_project(project_dir, template or "default", console)
         console.print()
         console.print(f"{__logo__} [bold green]Project created![/bold green]")
         console.print()
         console.print("Next steps:")
         console.print(f"  cd {name}")
-        console.print("  # Edit config.yaml with your settings")
+        console.print("  export OPENROUTER_API_KEY=sk-or-xxx")
         console.print("  zergbot run")
     except ValueError as e:
         console.print(f"[red]Error: {e}[/red]")
