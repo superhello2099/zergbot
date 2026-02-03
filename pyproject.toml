@@ -46,9 +46,9 @@ dev = [
 zergbot = "zergbot.cli.commands:app"
 
 [project.urls]
-Homepage = "https://github.com/openclaw/zergbot"
-Documentation = "https://github.com/openclaw/zergbot"
-Repository = "https://github.com/openclaw/zergbot"
+Homepage = "https://github.com/superhello2099/zergbot"
+Documentation = "https://github.com/superhello2099/zergbot"
+Repository = "https://github.com/superhello2099/zergbot"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/zergbot"]

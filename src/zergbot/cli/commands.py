@@ -70,7 +70,7 @@ def onboard():
     console.print("  1. Add your API key to [cyan]~/.zergbot/config.json[/cyan]")
     console.print("     Get one at: https://openrouter.ai/keys")
     console.print("  2. Chat: [cyan]zergbot agent -m \"Hello!\"[/cyan]")
-    console.print("\n[dim]Want Telegram/WhatsApp? See: https://github.com/HKUDS/zergbot#-chat-apps[/dim]")
+    console.print("\n[dim]Want Telegram/WhatsApp? See: https://github.com/superhello2099/zergbot#-chat-apps[/dim]")
 
 
 
