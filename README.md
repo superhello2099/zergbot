@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🐛 ZergBot
+<img src="assets/zergbot-logo-wide.png" alt="ZergBot Logo" width="500">
 
 ### Open-Source AI Agent Framework for Any Hardware
 
