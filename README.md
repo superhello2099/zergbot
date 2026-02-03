@@ -78,6 +78,24 @@ pip install -e .
 
 ---
 
+## Try It Now (30 seconds)
+
+**Docker (no installation needed):**
+
+```bash
+docker run -p 8080:8080 zergbot/demo
+# Open http://localhost:8080
+```
+
+**CLI Demo:**
+
+```bash
+pip install zergbot
+zergbot demo
+```
+
+---
+
 ## Quick Start
 
 ```bash
@@ -281,8 +299,9 @@ In StarCraft, the Zerg swarm wins through **speed** and **numbers**. ZergBot fol
 - [x] WhatsApp/Telegram channels
 - [x] Subagent spawning
 - [x] Cron scheduling
-- [ ] Docker image
-- [ ] Web UI
+- [x] Docker image
+- [x] Demo mode
+- [ ] Web UI (full)
 - [ ] Plugin marketplace
 
 ---
