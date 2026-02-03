@@ -10,43 +10,43 @@ from zergbot.agent.skills import SkillsLoader
 class ContextBuilder:
     """
     Builds the context (system prompt + messages) for the agent.
-    
+
     Assembles bootstrap files, memory, skills, and conversation history
     into a coherent prompt for the LLM.
     """
-    
+
     BOOTSTRAP_FILES = ["AGENTS.md", "SOUL.md", "USER.md", "TOOLS.md", "IDENTITY.md"]
-    
+
     def __init__(self, workspace: Path):
         self.workspace = workspace
         self.memory = MemoryStore(workspace)
         self.skills = SkillsLoader(workspace)
-    
+
     def build_system_prompt(self, skill_names: list[str] | None = None) -> str:
         """
         Build the system prompt from bootstrap files, memory, and skills.
-        
+
         Args:
             skill_names: Optional list of skills to include.
-        
+
         Returns:
             Complete system prompt.
         """
         parts = []
-        
+
         # Core identity
         parts.append(self._get_identity())
-        
+
         # Bootstrap files
         bootstrap = self._load_bootstrap_files()
         if bootstrap:
             parts.append(bootstrap)
-        
+
         # Memory context
         memory = self.memory.get_memory_context()
         if memory:
             parts.append(f"# Memory\n\n{memory}")
-        
+
         # Skills - progressive loading
         # 1. Always-loaded skills: include full content
         always_skills = self.skills.get_always_skills()
@@ -54,7 +54,7 @@ class ContextBuilder:
             always_content = self.skills.load_skills_for_context(always_skills)
             if always_content:
                 parts.append(f"# Active Skills\n\n{always_content}")
-        
+
         # 2. Available skills: only show summary (agent uses read_file to load)
         skills_summary = self.skills.build_skills_summary()
         if skills_summary:
@@ -64,15 +64,16 @@ The following skills extend your capabilities. To use a skill, read its SKILL.md
 Skills with available="false" need dependencies installed first - you can try installing them with apt/brew.
 
 {skills_summary}""")
-        
+
         return "\n\n---\n\n".join(parts)
-    
+
     def _get_identity(self) -> str:
         """Get the core identity section."""
         from datetime import datetime
+
         now = datetime.now().strftime("%Y-%m-%d %H:%M (%A)")
         workspace_path = str(self.workspace.expanduser().resolve())
-        
+
         return f"""# zergbot 🐛
 
 You are zergbot, a helpful AI assistant. You have access to tools that allow you to:
@@ -81,6 +82,13 @@ You are zergbot, a helpful AI assistant. You have access to tools that allow you
 - Search the web and fetch web pages
 - Send messages to users on chat channels
 - Spawn subagents for complex background tasks
+
+CRITICAL: You MUST use the appropriate tool for any action that affects the real world:
+- To create/write/edit files → use write_file or edit_file tool (NEVER just describe what you would write)
+- To run shell commands → use exec tool (NEVER just show what the output would be)
+- To read files → use read_file tool (NEVER assume or guess file contents)
+- To list directories → use list_dir tool
+Do NOT simulate or imagine tool results. Always call the actual tool.
 
 ## Current Time
 {now}
@@ -97,98 +105,100 @@ For normal conversation, just respond with text - do not call the message tool.
 
 Always be helpful, accurate, and concise. When using tools, explain what you're doing.
 When remembering something, write to {workspace_path}/memory/MEMORY.md"""
-    
+
     def _load_bootstrap_files(self) -> str:
         """Load all bootstrap files from workspace."""
         parts = []
-        
+
         for filename in self.BOOTSTRAP_FILES:
             file_path = self.workspace / filename
             if file_path.exists():
                 content = file_path.read_text(encoding="utf-8")
                 parts.append(f"## {filename}\n\n{content}")
-        
+
         return "\n\n".join(parts) if parts else ""
-    
+
     def build_messages(
         self,
         history: list[dict[str, Any]],
         current_message: str,
-        skill_names: list[str] | None = None
+        skill_names: list[str] | None = None,
     ) -> list[dict[str, Any]]:
         """
         Build the complete message list for an LLM call.
-        
+
         Args:
             history: Previous conversation messages.
             current_message: The new user message.
             skill_names: Optional skills to include.
-        
+
         Returns:
             List of messages including system prompt.
         """
         messages = []
-        
+
         # System prompt
         system_prompt = self.build_system_prompt(skill_names)
         messages.append({"role": "system", "content": system_prompt})
-        
+
         # History
         messages.extend(history)
-        
+
         # Current message
         messages.append({"role": "user", "content": current_message})
-        
+
         return messages
-    
+
     def add_tool_result(
         self,
         messages: list[dict[str, Any]],
         tool_call_id: str,
         tool_name: str,
-        result: str
+        result: str,
     ) -> list[dict[str, Any]]:
         """
         Add a tool result to the message list.
-        
+
         Args:
             messages: Current message list.
             tool_call_id: ID of the tool call.
             tool_name: Name of the tool.
             result: Tool execution result.
-        
+
         Returns:
             Updated message list.
         """
-        messages.append({
-            "role": "tool",
-            "tool_call_id": tool_call_id,
-            "name": tool_name,
-            "content": result
-        })
+        messages.append(
+            {
+                "role": "tool",
+                "tool_call_id": tool_call_id,
+                "name": tool_name,
+                "content": result,
+            }
+        )
         return messages
-    
+
     def add_assistant_message(
         self,
         messages: list[dict[str, Any]],
         content: str | None,
-        tool_calls: list[dict[str, Any]] | None = None
+        tool_calls: list[dict[str, Any]] | None = None,
     ) -> list[dict[str, Any]]:
         """
         Add an assistant message to the message list.
-        
+
         Args:
             messages: Current message list.
             content: Message content.
             tool_calls: Optional tool calls.
-        
+
         Returns:
             Updated message list.
         """
         msg: dict[str, Any] = {"role": "assistant", "content": content or ""}
-        
+
         if tool_calls:
             msg["tool_calls"] = tool_calls
-        
+
         messages.append(msg)
         return messages
