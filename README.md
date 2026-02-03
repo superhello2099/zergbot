@@ -99,11 +99,26 @@ zergbot demo
 ## Quick Start
 
 ```bash
-# First-time setup
-zergbot onboard
+# Create a new agent project
+zergbot init my-agent
+cd my-agent
 
-# Chat with your agent
-zergbot agent -m "What can you do?"
+# Set your API key
+export OPENROUTER_API_KEY=sk-or-xxx
+
+# Run your agent
+zergbot run
+```
+
+**Templates available:**
+
+- `default` — General-purpose assistant
+- `research` — Research and summarization
+- `code-helper` — Coding assistance
+
+```bash
+zergbot init research-bot -t research
+zergbot init helper -t code-helper
 ```
 
 **Example Output:**

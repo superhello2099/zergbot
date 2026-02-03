@@ -35,6 +35,73 @@ def main(
 
 
 # ============================================================================
+# Init / Scaffolding
+# ============================================================================
+
+
+@app.command()
+def init(
+    name: str = typer.Argument(..., help="Project name (creates directory)"),
+    template: str = typer.Option(
+        "default", "--template", "-t", help="Template: default, research, code-helper"
+    ),
+    force: bool = typer.Option(
+        False, "--force", "-f", help="Overwrite existing directory"
+    ),
+):
+    """Create a new ZergBot agent project.
+
+    Examples:
+        zergbot init my-agent           # Create with default template
+        zergbot init research-bot -t research
+        zergbot init helper -t code-helper
+    """
+    from zergbot.scaffold import create_project
+
+    project_dir = Path.cwd() / name
+
+    if project_dir.exists() and not force:
+        console.print(f"[red]Error: Directory '{name}' already exists[/red]")
+        console.print("Use --force to overwrite")
+        raise typer.Exit(1)
+
+    try:
+        create_project(project_dir, template, console)
+        console.print()
+        console.print(f"{__logo__} [bold green]Project created![/bold green]")
+        console.print()
+        console.print("Next steps:")
+        console.print(f"  cd {name}")
+        console.print("  # Edit config.yaml with your settings")
+        console.print("  zergbot run")
+    except ValueError as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def run(
+    config: str = typer.Option(
+        "config.yaml", "--config", "-c", help="Config file path"
+    ),
+):
+    """Run a ZergBot agent from the current project.
+
+    This command reads config.yaml and starts the agent.
+    """
+    config_path = Path(config)
+
+    if not config_path.exists():
+        console.print(f"[red]Error: Config file not found: {config}[/red]")
+        console.print("Run 'zergbot init <name>' to create a project first.")
+        raise typer.Exit(1)
+
+    from zergbot.scaffold import run_project
+
+    asyncio.run(run_project(config_path, console))
+
+
+# ============================================================================
 # Onboard / Setup
 # ============================================================================
 
