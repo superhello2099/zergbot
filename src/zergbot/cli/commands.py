@@ -795,33 +795,26 @@ def unlock():
 
     from zergbot.scaffold import PERSONALITIES
 
-    # Split into categories
-    standard = ["helpful", "coder", "researcher", "creative"]
-    hidden = ["companion", "roleplay", "unfiltered", "game"]
+    # Split into categories - only the fun ones
+    core = ["companion", "roleplay", "unfiltered", "game"]
     spicy = ["waifu", "husbando", "toxic", "devil", "confess", "chaos"]
     midnight = ["tsundere", "yandere", "dom", "sub", "drunk", "ex"]
 
     console.print()
     console.print(
         Panel(
-            "[bold]🔓 You found the secret menu![/bold]",
+            "[bold]🔓 You found the secret menu![/bold]\n"
+            "[dim]No boring templates here.[/dim]",
             border_style="magenta",
         )
     )
     console.print()
 
-    console.print("[bold cyan]Standard templates:[/bold cyan] (in README)")
-    for key in standard:
+    console.print("[bold cyan]Core templates:[/bold cyan]")
+    for key in core:
         if key in PERSONALITIES:
             p = PERSONALITIES[key]
-            console.print(f"  {p['emoji']} [green]{key}[/green] — {p['description']}")
-
-    console.print()
-    console.print("[bold yellow]Hidden templates:[/bold yellow] (not in README)")
-    for key in hidden:
-        if key in PERSONALITIES:
-            p = PERSONALITIES[key]
-            console.print(f"  {p['emoji']} [yellow]{key}[/yellow] — {p['description']}")
+            console.print(f"  {p['emoji']} [cyan]{key}[/cyan] — {p['description']}")
 
     console.print()
     console.print("[bold magenta]Spicy templates:[/bold magenta] (for those who know)")

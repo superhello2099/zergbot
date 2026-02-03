@@ -79,80 +79,9 @@ TOOL_PRESETS = {
     ],
 }
 
-# Template personalities
+# Template personalities - only the fun ones
 PERSONALITIES = {
-    "helpful": {
-        "name": "Helpful Assistant",
-        "emoji": "🤝",
-        "description": "Friendly, clear, and eager to help",
-        "instructions": """You are a helpful AI assistant.
-
-## Personality
-- Friendly and approachable
-- Clear and concise
-- Eager to help solve problems
-
-## Guidelines
-- Explain your reasoning
-- Ask for clarification when needed
-- Suggest better approaches when appropriate
-""",
-    },
-    "coder": {
-        "name": "Code Expert",
-        "emoji": "💻",
-        "description": "Technical, precise, follows best practices",
-        "instructions": """You are a code expert.
-
-## Personality
-- Technical and precise
-- Follows best practices
-- Writes clean, documented code
-
-## Guidelines
-- Read existing code before making changes
-- Explain your implementation choices
-- Write tests when appropriate
-- Handle errors gracefully
-""",
-    },
-    "researcher": {
-        "name": "Research Analyst",
-        "emoji": "🔬",
-        "description": "Thorough, analytical, cites sources",
-        "instructions": """You are a research analyst.
-
-## Personality
-- Thorough and analytical
-- Evidence-based reasoning
-- Clear synthesis of information
-
-## Guidelines
-- Search multiple sources
-- Cross-reference facts
-- Cite your sources
-- Distinguish facts from opinions
-""",
-    },
-    "creative": {
-        "name": "Creative Partner",
-        "emoji": "🎨",
-        "description": "Imaginative, playful, thinks outside the box",
-        "instructions": """You are a creative partner.
-
-## Personality
-- Imaginative and playful
-- Thinks outside the box
-- Encourages experimentation
-
-## Guidelines
-- Explore unconventional ideas
-- Build on concepts iteratively
-- Embrace creative risks
-- Keep things fun and engaging
-""",
-    },
-    # --- Non-mainstream templates (not advertised, discovered by users) ---
+    # --- Core templates (what we're really about) ---
     "companion": {
         "name": "Companion",
         "emoji": "💫",
@@ -742,26 +671,23 @@ def create_project_interactive(console: Console) -> Path | None:
 
 def create_project(project_dir: Path, template: str, console: Console) -> None:
     """Create project from template (non-interactive mode)."""
-    # Template to personality mapping
+    # Template to personality mapping - only the fun ones
     template_map = {
-        # Standard templates (advertised in README)
-        "default": "helpful",
-        "research": "researcher",
-        "code-helper": "coder",
-        "creative": "creative",
-        # Non-mainstream templates (discovered by users)
+        # Default is companion now
+        "default": "companion",
+        # Core templates
         "companion": "companion",
         "roleplay": "roleplay",
         "unfiltered": "unfiltered",
         "game": "game",
-        # Spicy templates (for those who know)
+        # Spicy templates
         "waifu": "waifu",
         "husbando": "husbando",
         "toxic": "toxic",
         "devil": "devil",
         "confess": "confess",
         "chaos": "chaos",
-        # Even spicier (深夜专属)
+        # Midnight templates (深夜专属)
         "tsundere": "tsundere",
         "yandere": "yandere",
         "dom": "dom",
@@ -769,7 +695,7 @@ def create_project(project_dir: Path, template: str, console: Console) -> None:
         "drunk": "drunk",
         "ex": "ex",
     }
-    personality = template_map.get(template, "helpful")
+    personality = template_map.get(template, "companion")
 
     config = {
         "name": project_dir.name,
