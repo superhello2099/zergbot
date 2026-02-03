@@ -157,13 +157,14 @@ my-agent/
 
 ---
 
-## Next Steps
+## Progress
 
-1. [ ] 创建 `Dockerfile` 和 `docker-compose.demo.yml`
-2. [ ] 实现 `zergbot demo --web` 命令
-3. [ ] 申请 OpenRouter 免费 API key 用于 demo
-4. [ ] 写 3 个示例任务
-5. [ ] 测试 "30 秒体验" 是否达成
+- [x] Phase A1: Docker one-liner (`docker run zergbot/demo`)
+- [x] Phase A2: CLI scaffolding (`zergbot init my-agent`)
+- [ ] Phase A3: 示例项目 (Meme Generator, Research Agent, Code Helper)
+- [ ] 申请 OpenRouter 免费 API key 用于 demo
+- [ ] 发布 Docker 镜像到 Docker Hub
+- [ ] 测试 "30 秒体验" 是否达成
 
 ---
 
