@@ -783,5 +783,80 @@ def status():
         )
 
 
+# ============================================================================
+# Hidden Easter Eggs
+# ============================================================================
+
+
+@app.command(hidden=True)
+def unlock():
+    """🔓 Reveal all hidden templates."""
+    from rich.panel import Panel
+
+    from zergbot.scaffold import PERSONALITIES
+
+    # Split into categories
+    standard = ["helpful", "coder", "researcher", "creative"]
+    hidden = ["companion", "roleplay", "unfiltered", "game"]
+    spicy = ["waifu", "husbando", "toxic", "devil", "confess", "chaos"]
+
+    console.print()
+    console.print(
+        Panel(
+            "[bold]🔓 You found the secret menu![/bold]",
+            border_style="magenta",
+        )
+    )
+    console.print()
+
+    console.print("[bold cyan]Standard templates:[/bold cyan] (in README)")
+    for key in standard:
+        if key in PERSONALITIES:
+            p = PERSONALITIES[key]
+            console.print(f"  {p['emoji']} [green]{key}[/green] — {p['description']}")
+
+    console.print()
+    console.print("[bold yellow]Hidden templates:[/bold yellow] (not in README)")
+    for key in hidden:
+        if key in PERSONALITIES:
+            p = PERSONALITIES[key]
+            console.print(f"  {p['emoji']} [yellow]{key}[/yellow] — {p['description']}")
+
+    console.print()
+    console.print("[bold magenta]Spicy templates:[/bold magenta] (for those who know)")
+    for key in spicy:
+        if key in PERSONALITIES:
+            p = PERSONALITIES[key]
+            console.print(
+                f"  {p['emoji']} [magenta]{key}[/magenta] — {p['description']}"
+            )
+
+    console.print()
+    console.print("[dim]Usage: zergbot init my-bot -t <template>[/dim]")
+    console.print()
+
+
+@app.command(hidden=True)
+def lore():
+    """🐛 The Zerg philosophy."""
+    from rich.panel import Panel
+
+    console.print()
+    console.print(
+        Panel(
+            "[bold]🐛 THE ZERG WAY[/bold]\n\n"
+            "[dim]In StarCraft, the Zerg swarm wins through[/dim]\n"
+            "[bold green]SPEED[/bold green] — Deploy in seconds, not hours\n"
+            "[bold green]SWARM[/bold green] — Spawn agents for parallel work\n"
+            "[bold green]ADAPT[/bold green] — Any hardware, any model\n"
+            "[bold green]EVOLVE[/bold green] — Your rules, your way\n\n"
+            '[dim italic]"Cloud AI says no. Your local AI says yes."[/dim italic]',
+            border_style="green",
+            padding=(1, 2),
+        )
+    )
+    console.print()
+
+
 if __name__ == "__main__":
     app()
