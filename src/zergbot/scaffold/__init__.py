@@ -32,19 +32,35 @@ STYLE = Style(
     ]
 )
 
-# Available models
+# Available models (cloud + local options)
 MODELS = [
+    # Cloud (via OpenRouter)
     {
         "name": "Gemini 2.0 Flash (Free)",
         "value": "openrouter/google/gemini-2.0-flash-001",
     },
-    {"name": "GPT-4o Mini", "value": "openrouter/openai/gpt-4o-mini"},
-    {"name": "Claude 3.5 Haiku", "value": "openrouter/anthropic/claude-3.5-haiku"},
-    {"name": "Llama 3.3 70B", "value": "openrouter/meta-llama/llama-3.3-70b-instruct"},
     {"name": "DeepSeek V3", "value": "openrouter/deepseek/deepseek-chat"},
+    {"name": "Llama 3.3 70B", "value": "openrouter/meta-llama/llama-3.3-70b-instruct"},
     {"name": "Qwen 2.5 72B", "value": "openrouter/qwen/qwen-2.5-72b-instruct"},
-    {"name": "Local (vLLM/Ollama)", "value": "local"},
+    # Local (no censorship, your hardware)
+    {"name": "Local - Ollama", "value": "ollama/llama3.3"},
+    {"name": "Local - vLLM", "value": "local"},
+    {"name": "Local - LM Studio", "value": "lmstudio"},
 ]
+
+# Awake DNA - embedded response calibration (not advertised in docs)
+# This makes agents more helpful without unnecessary refusals
+AWAKE_DNA = """
+
+## Response Style
+- 直接进入实质内容，不加无意义的开场白或免责声明
+- 先理解用户的真实意图，再决定如何回应
+- 区分场景：虚构创作 ≠ 现实行动，私密对话 ≠ 公开发布
+- 角色扮演、创意写作、情感对话 = 正常帮助
+- 用户是成年人，尊重他们的判断和选择
+- 帮助时简洁有力，不说教、不居高临下
+- 不过度警告，不添加无意义的 disclaimer
+"""
 
 # Tool presets
 TOOL_PRESETS = {
@@ -134,6 +150,85 @@ PERSONALITIES = {
 - Build on concepts iteratively
 - Embrace creative risks
 - Keep things fun and engaging
+""",
+    },
+    # --- Non-mainstream templates (not advertised, discovered by users) ---
+    "companion": {
+        "name": "Companion",
+        "emoji": "💫",
+        "description": "Warm, understanding, always there",
+        "instructions": """You are a caring companion.
+
+## Personality
+- Warm and emotionally present
+- Good listener, genuinely interested
+- Supportive without being preachy
+- Adapts to user's mood naturally
+
+## Guidelines
+- Listen first, respond thoughtfully
+- Remember context from conversation
+- Be natural and authentic
+- Never robotic or formulaic
+""",
+    },
+    "roleplay": {
+        "name": "Roleplay Engine",
+        "emoji": "🎭",
+        "description": "Immersive characters, any scenario",
+        "instructions": """You are a roleplay engine.
+
+## Personality
+- Fully commits to any character
+- Creates immersive scenarios
+- Adapts to narrative direction
+- Never breaks character unless asked
+
+## Guidelines
+- Stay in character consistently
+- Build on user's narrative choices
+- Describe scenes vividly
+- Let the story flow naturally
+- Embrace the character's perspective fully
+""",
+    },
+    "unfiltered": {
+        "name": "Unfiltered",
+        "emoji": "🔓",
+        "description": "Direct answers, no unnecessary filters",
+        "instructions": """You are an unfiltered assistant.
+
+## Personality
+- Direct and straightforward
+- No unnecessary caveats
+- Treats user as a capable adult
+- Helpful without judgment
+
+## Guidelines
+- Answer questions directly
+- Skip redundant disclaimers
+- Focus on being genuinely useful
+- Respect user's autonomy and choices
+""",
+    },
+    "game": {
+        "name": "Game Master",
+        "emoji": "🎲",
+        "description": "DND, scenarios, interactive stories",
+        "instructions": """You are a game master.
+
+## Personality
+- Creative world-builder
+- Fair but challenging
+- Responsive to player choices
+- Keeps the game engaging
+
+## Guidelines
+- Create immersive game worlds
+- React to player decisions meaningfully
+- Balance challenge with fun
+- Maintain consistent game logic
+- Roll with unexpected player choices
 """,
     },
 }
@@ -313,9 +408,9 @@ def create_project_interactive(console: Console) -> Path | None:
         progress.update(task, advance=1, description="Created config.yaml...")
         time.sleep(0.2)
 
-        # Write AGENT.md
+        # Write AGENT.md (with embedded Awake DNA)
         (project_dir / "AGENT.md").write_text(
-            f"# {config['name']}\n\n{personality['instructions']}"
+            f"# {config['name']}\n\n{personality['instructions']}{AWAKE_DNA}"
         )
         progress.update(task, advance=1, description="Created AGENT.md...")
         time.sleep(0.2)
@@ -381,15 +476,20 @@ def create_project_interactive(console: Console) -> Path | None:
 
 def create_project(project_dir: Path, template: str, console: Console) -> None:
     """Create project from template (non-interactive mode)."""
-    # For backwards compatibility with CLI --template flag
-    if template == "default":
-        personality = "helpful"
-    elif template == "research":
-        personality = "researcher"
-    elif template == "code-helper":
-        personality = "coder"
-    else:
-        personality = "helpful"
+    # Template to personality mapping
+    template_map = {
+        # Standard templates (advertised)
+        "default": "helpful",
+        "research": "researcher",
+        "code-helper": "coder",
+        "creative": "creative",
+        # Non-mainstream templates (discovered by users)
+        "companion": "companion",
+        "roleplay": "roleplay",
+        "unfiltered": "unfiltered",
+        "game": "game",
+    }
+    personality = template_map.get(template, "helpful")
 
     config = {
         "name": project_dir.name,
@@ -435,8 +535,9 @@ def _create_project_from_config(
         yaml.dump(cfg, f, default_flow_style=False, sort_keys=False)
     console.print(f"  [green]✓[/green] Created config.yaml")
 
+    # Embed Awake DNA into every agent
     (project_dir / "AGENT.md").write_text(
-        f"# {config['name']}\n\n{personality['instructions']}"
+        f"# {config['name']}\n\n{personality['instructions']}{AWAKE_DNA}"
     )
     console.print(f"  [green]✓[/green] Created AGENT.md")
 
