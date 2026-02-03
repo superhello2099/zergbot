@@ -1,73 +1,95 @@
 # 🐛 ZergBot
 
-> A lightweight AI agent framework - Rush your tasks with swarm intelligence
+**Deploy AI agents anywhere. Your models, your hardware, your rules.**
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Overview
+---
 
-ZergBot is a lightweight (~4000 lines) AI agent framework that connects to any LLM backend. Like the Zerg swarm, it's fast, efficient, and can be deployed in large numbers.
+## Why ZergBot?
 
-**Part of the FLAMINGO ecosystem:**
+Most AI agent frameworks lock you into cloud APIs. ZergBot doesn't.
 
-- 🦩 **FLAMINGO** - The brain (LLM model)
-- 🐛 **ZergBot** - The executor (agent framework)
+- **Run on YOUR hardware** — 4090, 5090, A100, Mac M-series, or cloud
+- **Use ANY model** — OpenAI, Claude, Llama, Qwen, or your custom fine-tuned models
+- **Deploy in minutes** — `pip install` and go, no complex setup
+- **Spawn swarms** — Create child agents for parallel tasks
 
-## Features
-
-- 🚀 **Lightweight** - Only ~4000 lines of code
-- 🔌 **Any LLM Backend** - OpenAI, Claude, local models via OpenAI-compatible API
-- 🛠️ **Built-in Tools** - File operations, shell commands, web search, and more
-- 📱 **Multi-channel** - WhatsApp, Telegram support
-- ⏰ **Cron Jobs** - Scheduled task execution
-- 🐣 **Spawn Subagents** - Create child agents for parallel work
+```
+┌─────────────────────────────────────────────────────┐
+│  Your Model (local/cloud)                           │
+│  ├── FLAMINGO, Llama, Qwen, GPT, Claude...         │
+│  └── vLLM, Ollama, OpenAI-compatible API           │
+└─────────────────────────────────────────────────────┘
+                        ▲
+                        │ OpenAI-compatible API
+                        ▼
+┌─────────────────────────────────────────────────────┐
+│  🐛 ZergBot                                         │
+│  ├── Agent Loop (tool calling, memory)             │
+│  ├── Built-in Tools (files, shell, web, spawn)     │
+│  ├── Channels (WhatsApp, Telegram)                 │
+│  └── Cron Jobs (scheduled tasks)                   │
+└─────────────────────────────────────────────────────┘
+```
 
 ## Quick Start
 
 ```bash
-# Install
 pip install zergbot
-
-# Initialize
-zergbot onboard
-
-# Chat with agent
-zergbot agent -m "Hello, what can you do?"
-
-# Start gateway API
-zergbot gateway
+zergbot onboard        # First-time setup
+zergbot agent -m "What can you do?"
 ```
 
 ## Configuration
 
 Edit `~/.zergbot/config.json`:
 
+### Cloud API (OpenAI/Claude)
+
 ```json
 {
-  "agents": {
-    "defaults": {
-      "model": "openai/gpt-4",
-      "maxTokens": 8192
-    }
-  },
   "providers": {
     "openai": {
-      "apiKey": "your-api-key",
+      "apiKey": "sk-xxx",
       "apiBase": "https://api.openai.com/v1"
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": "openai/gpt-4o"
     }
   }
 }
 ```
 
-### Use with FLAMINGO (Local Model)
+### Local Model (vLLM/Ollama)
 
 ```json
 {
   "providers": {
     "openai": {
       "apiKey": "sk-local",
-      "apiBase": "http://your-server:8885/v1"
+      "apiBase": "http://localhost:8000/v1"
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": "openai/your-model-name"
+    }
+  }
+}
+```
+
+### GPU Server (A800/4090/5090)
+
+```json
+{
+  "providers": {
+    "openai": {
+      "apiKey": "sk-local",
+      "apiBase": "http://your-gpu-server:8885/v1"
     }
   },
   "agents": {
@@ -78,31 +100,39 @@ Edit `~/.zergbot/config.json`:
 }
 ```
 
-## Tools
+## Built-in Tools
 
-ZergBot comes with built-in tools:
-
-| Tool         | Description             |
-| ------------ | ----------------------- |
-| `read_file`  | Read file contents      |
-| `write_file` | Write to files          |
-| `edit_file`  | Edit existing files     |
-| `list_dir`   | List directory contents |
-| `exec`       | Execute shell commands  |
-| `web_search` | Search the web          |
-| `web_fetch`  | Fetch web pages         |
-| `spawn`      | Create subagents        |
-| `message`    | Send messages           |
+| Tool         | What it does                     |
+| ------------ | -------------------------------- |
+| `read_file`  | Read any file                    |
+| `write_file` | Create/overwrite files           |
+| `edit_file`  | Surgical edits to existing files |
+| `list_dir`   | Browse directories               |
+| `exec`       | Run shell commands               |
+| `web_search` | Search the internet              |
+| `web_fetch`  | Fetch and parse web pages        |
+| `spawn`      | Create child agents              |
+| `message`    | Send to WhatsApp/Telegram        |
 
 ## Channels
 
-Connect ZergBot to messaging platforms:
+Connect to messaging platforms:
 
 ```bash
-# WhatsApp
+# WhatsApp (scan QR code)
 zergbot channels login
 
-# Then scan QR code with WhatsApp
+# Telegram (set bot token in config)
+zergbot gateway
+```
+
+## Spawn Subagents
+
+Create child agents for parallel work:
+
+```python
+# Agent automatically spawns helpers when needed
+"Spawn an agent to research X while I work on Y"
 ```
 
 ## Cron Jobs
@@ -110,14 +140,32 @@ zergbot channels login
 Schedule recurring tasks:
 
 ```bash
-zergbot cron add "0 9 * * *" "Good morning! Check my schedule."
+zergbot cron add "0 9 * * *" "Check my calendar and summarize today's meetings"
 zergbot cron list
 ```
 
+## Deployment Options
+
+| Platform    | Command               |
+| ----------- | --------------------- |
+| Local dev   | `pip install -e .`    |
+| Production  | `pip install zergbot` |
+| Docker      | Coming soon           |
+| API Gateway | `zergbot gateway`     |
+
+## Philosophy
+
+**Zerg Rush**: In StarCraft, Zerg wins by speed and numbers. ZergBot follows the same principle:
+
+1. **Fast deployment** — Minutes, not hours
+2. **Swarm capability** — Spawn agents as needed
+3. **Hardware agnostic** — Run on whatever you have
+4. **No vendor lock-in** — Switch models anytime
+
 ## License
 
-MIT License - Fork it, modify it, deploy it!
+MIT — Use it, fork it, sell it, whatever.
 
 ---
 
-_🐛 Rush your tasks. Swarm intelligence at work._
+Built by [OpenClaw](https://github.com/openclaw). Part of the FLAMINGO ecosystem.
