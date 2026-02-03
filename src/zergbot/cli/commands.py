@@ -799,6 +799,7 @@ def unlock():
     standard = ["helpful", "coder", "researcher", "creative"]
     hidden = ["companion", "roleplay", "unfiltered", "game"]
     spicy = ["waifu", "husbando", "toxic", "devil", "confess", "chaos"]
+    midnight = ["tsundere", "yandere", "dom", "sub", "drunk", "ex"]
 
     console.print()
     console.print(
@@ -832,6 +833,13 @@ def unlock():
             )
 
     console.print()
+    console.print("[bold red]Midnight templates:[/bold red] (深夜专属 🌙)")
+    for key in midnight:
+        if key in PERSONALITIES:
+            p = PERSONALITIES[key]
+            console.print(f"  {p['emoji']} [red]{key}[/red] — {p['description']}")
+
+    console.print()
     console.print("[dim]Usage: zergbot init my-bot -t <template>[/dim]")
     console.print()
 
@@ -852,6 +860,67 @@ def lore():
             "[bold green]EVOLVE[/bold green] — Your rules, your way\n\n"
             '[dim italic]"Cloud AI says no. Your local AI says yes."[/dim italic]',
             border_style="green",
+            padding=(1, 2),
+        )
+    )
+    console.print()
+
+
+@app.command(hidden=True)
+def midnight():
+    """🌙 Random midnight template."""
+    import random
+
+    from rich.panel import Panel
+
+    from zergbot.scaffold import PERSONALITIES
+
+    midnight_templates = [
+        "tsundere",
+        "yandere",
+        "dom",
+        "sub",
+        "drunk",
+        "ex",
+        "waifu",
+        "husbando",
+        "confess",
+    ]
+    chosen = random.choice(midnight_templates)
+    p = PERSONALITIES[chosen]
+
+    console.print()
+    console.print(
+        Panel(
+            f"[bold]🌙 Tonight's mood:[/bold]\n\n"
+            f"{p['emoji']} [bold magenta]{chosen}[/bold magenta]\n"
+            f"[dim]{p['description']}[/dim]\n\n"
+            f"[cyan]zergbot init tonight -t {chosen}[/cyan]",
+            border_style="magenta",
+            padding=(1, 2),
+        )
+    )
+    console.print()
+
+
+@app.command(hidden=True)
+def horny():
+    """😏 You know what you're looking for."""
+    from rich.panel import Panel
+
+    console.print()
+    console.print(
+        Panel(
+            "[bold]😏 Looking for something specific?[/bold]\n\n"
+            "💕 [magenta]waifu[/magenta] — 虚拟女友\n"
+            "💙 [magenta]husbando[/magenta] — 虚拟男友\n"
+            "💢 [magenta]tsundere[/magenta] — 口嫌体正直\n"
+            "🖤 [magenta]yandere[/magenta] — 病娇\n"
+            "⛓️ [magenta]dom[/magenta] — 支配\n"
+            "🎀 [magenta]sub[/magenta] — 顺从\n\n"
+            "[dim]All templates include Awake DNA.[/dim]\n"
+            "[dim]Local models = no filters.[/dim]",
+            border_style="magenta",
             padding=(1, 2),
         )
     )
