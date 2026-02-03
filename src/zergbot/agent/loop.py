@@ -159,6 +159,22 @@ class AgentLoop:
         self._running = False
         logger.info("Agent loop stopping")
 
+    async def shutdown(self, timeout: float = 30.0) -> None:
+        """
+        Gracefully shutdown the agent loop and all subagents.
+
+        Args:
+            timeout: Maximum time to wait for cleanup.
+        """
+        logger.info("Agent loop shutting down gracefully...")
+        self.stop()
+
+        # Shutdown subagents
+        await self.subagents.shutdown(timeout=timeout)
+
+        # Save any pending sessions
+        logger.info("Agent loop shutdown complete")
+
     async def _process_message(self, msg: InboundMessage) -> OutboundMessage | None:
         """
         Process a single inbound message.
